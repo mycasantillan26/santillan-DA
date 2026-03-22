@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Sales Dashboard — Myca Santillan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<style>
+/* ===== THEME ===== */
+:root {
+  --accent: #e8c547;
+  --accent-dim: rgba(232,197,71,0.1);
+  --accent-glow: rgba(232,197,71,0.25);
+  --ff-display: 'Syne', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+  --radius-card: 16px;
+  --radius-pill: 100px;
+  --transition: 0.3s ease;
+}
+[data-theme="dark"] {
+  --bg: #0d0d10; --bg-card: #14141a; --surface: #1e1e28;
+  --border: rgba(255,255,255,0.07); --text-primary: #f0f0f5;
+  --text-secondary: #8a8aa0; --text-muted: #55556a;
+  --shadow: rgba(0,0,0,0.5); --img-border: rgba(255,255,255,0.1);
+}
+[data-theme="light"] {
+  --bg: #f5f4f0; --bg-card: #ffffff; --surface: #eeecea;
+  --border: rgba(0,0,0,0.08); --text-primary: #111118;
+  --text-secondary: #555566; --text-muted: #999aaa;
+  --shadow: rgba(0,0,0,0.1); --img-border: rgba(0,0,0,0.1);
+}
+
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+li{list-style:none;} a{color:inherit;text-decoration:none;} img{height:auto;display:block;max-width:100%;}
+html{font-size:10px;scroll-behavior:smooth;}
+body{font-family:var(--ff-body);font-size:1.6rem;line-height:1.8;background:var(--bg);color:var(--text-secondary);transition:background .4s ease,color .4s ease;user-select:none;-webkit-user-select:none;}
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:10px;}
+
+/* ===== HEADER ===== */
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding-block:18px;transition:background .4s ease;}
+[data-theme="light"] .header{background:rgba(245,244,240,.92);}
+.header-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);transition:color var(--transition);}
+.back-link:hover{color:var(--accent);}
+.logo{font-family:var(--ff-display);font-size:2rem;font-weight:800;color:var(--text-primary);}
+.logo span{color:var(--accent);}
+.theme-toggle{width:52px;height:28px;background:var(--surface);border-radius:var(--radius-pill);position:relative;cursor:pointer;border:1px solid var(--border);flex-shrink:0;}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--accent);transition:transform .4s cubic-bezier(.68,-.55,.265,1.55);}
+[data-theme="light"] .theme-toggle::after{transform:translateX(24px);}
+.toggle-icon{position:absolute;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none;}
+.toggle-icon.moon{left:5px;} .toggle-icon.sun{right:4px;}
+
+/* ===== HERO ===== */
+.project-hero{background:var(--bg-card);border-bottom:1px solid var(--border);padding-block:64px 48px;}
+.project-hero-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;}
+.project-crumb{display:flex;align-items:center;gap:8px;font-size:1.2rem;font-family:var(--ff-display);font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-block-end:20px;}
+.project-crumb .dot{color:var(--accent);}
+.project-title{font-family:var(--ff-display);font-size:clamp(2.8rem,5vw,4.4rem);font-weight:800;color:var(--text-primary);line-height:1.1;margin-block-end:18px;}
+.project-title span{color:var(--accent);}
+.project-desc{font-size:1.7rem;color:var(--text-secondary);max-width:640px;line-height:1.75;margin-block-end:32px;}
+.project-meta{display:flex;flex-wrap:wrap;gap:12px;}
+.meta-tag{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:6px 14px;border-radius:var(--radius-pill);}
+.meta-tag.accent{background:var(--accent-dim);border-color:rgba(232,197,71,.3);color:var(--accent);}
+
+/* ===== LAYOUT ===== */
+.content-wrap{max-width:1060px;margin-inline:auto;padding:60px 24px;display:grid;grid-template-columns:1fr 260px;gap:60px;align-items:start;}
+.content-section{margin-block-end:60px;padding-block-end:60px;border-bottom:1px solid var(--border);}
+.content-section:last-child{border-bottom:none;margin-block-end:0;}
+.section-label{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-block-end:10px;display:block;}
+.section-heading{font-family:var(--ff-display);font-size:clamp(2rem,3vw,2.8rem);font-weight:800;color:var(--text-primary);margin-block-end:20px;line-height:1.2;}
+p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
+
+/* Lists */
+.styled-list{display:flex;flex-direction:column;gap:10px;margin-block:16px;}
+.styled-list li{display:flex;align-items:flex-start;gap:10px;font-size:1.55rem;color:var(--text-secondary);}
+.styled-list li::before{content:'▸';color:var(--accent);font-size:1.2rem;flex-shrink:0;margin-top:3px;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-block:28px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:border-color var(--transition),transform var(--transition);}
+.stat-card:hover{border-color:rgba(232,197,71,.4);transform:translateY(-3px);}
+.stat-value{font-family:var(--ff-display);font-size:2.2rem;font-weight:800;color:var(--accent);line-height:1;}
+.stat-label{font-size:1.2rem;color:var(--text-muted);margin-top:4px;font-family:var(--ff-display);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+
+/* Step blocks */
+.step-block{margin-block:36px;}
+.step-header{display:flex;align-items:center;gap:16px;margin-block-end:14px;}
+.step-badge{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#111;font-family:var(--ff-display);font-size:1.4rem;font-weight:800;display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 0 4px var(--accent-dim);}
+.step-title{font-family:var(--ff-display);font-size:1.8rem;font-weight:700;color:var(--text-primary);}
+.step-desc{font-size:1.55rem;color:var(--text-secondary);margin-block-end:14px;padding-left:52px;}
+
+/* Pipeline */
+.pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-block:28px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;}
+.pipe-step{display:flex;align-items:center;}
+.pipe-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-family:var(--ff-display);font-size:1.2rem;font-weight:700;color:var(--text-secondary);white-space:nowrap;transition:border-color var(--transition),color var(--transition);}
+.pipe-node:hover{border-color:var(--accent);color:var(--accent);}
+.pipe-arrow{color:var(--text-muted);font-size:1.4rem;padding-inline:6px;flex-shrink:0;}
+
+/* Images */
+.project-img-wrap{margin-block:18px;border-radius:12px;overflow:hidden;border:1px solid var(--img-border);box-shadow:0 8px 30px var(--shadow);}
+.project-img-wrap img{width:100%;display:block;transition:transform .4s ease;}
+.project-img-wrap:hover img{transform:scale(1.01);}
+.img-caption{background:var(--surface);padding:10px 16px;font-size:1.2rem;color:var(--text-muted);font-family:var(--ff-display);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;}
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-block:18px;}
+
+/* Cert callout */
+.cert-callout{display:flex;align-items:center;gap:14px;background:var(--accent-dim);border:1px solid rgba(232,197,71,.25);border-radius:12px;padding:16px 20px;margin-block:20px;}
+.cert-callout ion-icon{color:var(--accent);font-size:2.4rem;flex-shrink:0;}
+.cert-callout p{font-size:1.5rem;color:var(--text-secondary);line-height:1.6;margin:0;}
+.cert-callout a{color:var(--accent);font-weight:600;}
+.cert-callout a:hover{text-decoration:underline;}
+
+/* Metrics */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-block:24px;}
+.metric-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:22px 20px;text-align:center;transition:border-color var(--transition),transform var(--transition);}
+.metric-card:hover{border-color:rgba(232,197,71,.35);transform:translateY(-3px);}
+.metric-value{font-family:var(--ff-display);font-size:2.8rem;font-weight:800;color:var(--accent);line-height:1;margin-block-end:6px;}
+.metric-label{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
+
+/* Result checklist */
+.result-check{display:flex;flex-direction:column;gap:12px;margin-block:20px;}
+.result-check li{display:flex;align-items:center;gap:12px;font-size:1.55rem;color:var(--text-secondary);}
+.check-icon{width:24px;height:24px;border-radius:50%;background:rgba(232,197,71,.15);border:1.5px solid rgba(232,197,71,.4);color:var(--accent);display:grid;place-items:center;font-size:1.2rem;flex-shrink:0;}
+
+/* Rec cards */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-block-start:8px;}
+.rec-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);padding:24px;transition:border-color var(--transition),transform var(--transition);}
+.rec-card:hover{border-color:rgba(232,197,71,.3);transform:translateY(-3px);}
+.rec-icon{font-size:2.8rem;margin-block-end:12px;line-height:1;}
+.rec-title{font-family:var(--ff-display);font-size:1.6rem;font-weight:700;color:var(--text-primary);margin-block-end:10px;}
+.rec-text{font-size:1.4rem;color:var(--text-secondary);line-height:1.7;}
+
+/* Sidebar */
+.sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:20px;}
+.sidebar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);padding:24px;}
+.sidebar-card-title{font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-block-end:16px;}
+.toc-list{display:flex;flex-direction:column;gap:4px;}
+.toc-link{display:flex;align-items:center;gap:8px;font-size:1.35rem;color:var(--text-secondary);padding:7px 10px;border-radius:8px;transition:background var(--transition),color var(--transition);font-family:var(--ff-display);font-weight:600;}
+.toc-link:hover,.toc-link.active{background:var(--accent-dim);color:var(--accent);}
+.toc-link::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.tool-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--ff-display);font-size:1.2rem;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);margin:4px;}
+.proj-link{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:1.4rem;color:var(--text-secondary);transition:color var(--transition);font-family:var(--ff-display);font-weight:600;}
+.proj-link:last-child{border-bottom:none;} .proj-link:hover{color:var(--accent);} .proj-link ion-icon{font-size:1.8rem;flex-shrink:0;}
+
+/* Footer */
+.footer{background:var(--bg-card);border-top:1px solid var(--border);padding-block:32px;}
+.footer-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.footer-note{font-size:1.3rem;color:var(--text-muted);}
+
+/* Responsive */
+@media(max-width:768px){
+  .content-wrap{grid-template-columns:1fr;padding:40px 20px;}
+  .sidebar{position:static;}
+  .img-grid{grid-template-columns:1fr;}
+  .step-desc{padding-left:0;}
+  .pipeline{gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="back-link"><ion-icon name="arrow-back-outline"></ion-icon> Back</a>
+    <a href="index.html" class="logo">Myca<span>.</span></a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="toggle-icon moon">🌙</span>
+      <span class="toggle-icon sun">☀️</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="project-hero">
+  <div class="project-hero-inner">
+    <div class="project-crumb">
+      <span>Portfolio</span><span class="dot">✦</span><span>Excel</span>
+    </div>
+    <h1 class="project-title">Retail Sales<br><span>Dashboard</span></h1>
+    <p class="project-desc">
+      Transforming raw retail data into actionable insights through Excel — Pivot Tables, dynamic charts, and an interactive dashboard with slicers for regional and category filtering.
+    </p>
+    <div class="project-meta">
+      <span class="meta-tag accent">📊 Excel</span>
+      <span class="meta-tag">Pivot Tables</span>
+      <span class="meta-tag">Data Cleaning</span>
+      <span class="meta-tag">Dashboard</span>
+      <span class="meta-tag">VLOOKUP / XLOOKUP</span>
+      <span class="meta-tag">Great Learning Certified</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="content-wrap">
+<article class="article">
+
+  <!-- Preview + Stats -->
+  <div class="content-section">
+    <div class="project-img-wrap">
+      <img src="excel/excel-dashboard.jfif" alt="Retail Sales Dashboard Preview">
+      <div class="img-caption">Final Dashboard — Retail Sales Analysis</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Steps</div></div>
+      <div class="stat-card"><div class="stat-value">2yr</div><div class="stat-label">Data Range</div></div>
+      <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">Regions</div></div>
+      <div class="stat-card"><div class="stat-value">✓</div><div class="stat-label">Certified</div></div>
+    </div>
+  </div>
+
+  <!-- Introduction -->
+  <div class="content-section" id="introduction">
+    <p class="section-label">Overview</p>
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+      This project analyzes a retail sales dataset using Microsoft Excel. The dataset was provided by
+      <strong style="color:var(--text-primary);">Great Learning</strong> as part of their
+      <a href="https://www.mygreatlearning.com/certificate/FFRBRIBH?referrer_code=GLAQ7TUQ" target="_blank" style="color:var(--accent);">Excel for Beginners certification</a> program.
+    </p>
+    <p>
+      The course covers data cleaning, text manipulation, formulas, VLOOKUP/XLOOKUP, pivot tables,
+      pivot charts, and dashboard visualization. The goal is to transform raw retail data into
+      meaningful insights about sales trends, category performance, regional results, and discount impact.
+    </p>
+    <div class="cert-callout">
+      <ion-icon name="ribbon-outline"></ion-icon>
+      <p>Certified in <a href="https://www.mygreatlearning.com/certificate/FFRBRIBH?referrer_code=GLAQ7TUQ" target="_blank">Excel for Beginners</a> from Great Learning upon completing this project.</p>
+    </div>
+  </div>
+
+  <!-- Ask -->
+  <div class="content-section" id="ask">
+    <p class="section-label">Problem Statement</p>
+    <h2 class="section-heading">The Ask</h2>
+    <p>The retail chain faces challenges in managing inventory, promotions, and regional performance. Management needs answers to:</p>
+    <ul class="styled-list">
+      <li>Monthly and seasonal sales trends — when do peaks and dips occur?</li>
+      <li>Top-performing and underperforming product categories</li>
+      <li>Sales performance compared across different regions</li>
+      <li>The impact of discount strategies on total and net revenue</li>
+    </ul>
+    <p style="margin-top:16px;">The objective is to surface insights that guide inventory planning, marketing strategies, pricing decisions, and regional resource allocation.</p>
+
+    <!-- Pipeline -->
+    <div class="pipeline">
+      <div class="pipe-step"><div class="pipe-node">Raw Data</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Clean Data</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Preprocess</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Analyze</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Visualize</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node" style="border-color:rgba(232,197,71,.4);color:var(--accent);">Dashboard ✓</div></div>
+    </div>
+  </div>
+
+  <!-- Process -->
+  <div class="content-section" id="process">
+    <p class="section-label">Methodology</p>
+    <h2 class="section-heading">Process</h2>
+    <p>The dataset was cleaned, prepared, analyzed, and visualized entirely in Microsoft Excel across 7 steps:</p>
+
+    <!-- Step 1 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">1</div><h3 class="step-title">Data Cleaning</h3></div>
+      <p class="step-desc">Removed duplicates, handled missing values in Product / Category / Region, standardized text values, verified numeric fields, and ensured consistent OrderDate formatting.</p>
+      <ul class="styled-list" style="padding-left:52px;">
+        <li>Removed duplicate records</li>
+        <li>Handled missing values in Product, Category, Region columns</li>
+        <li>Standardized text values and verified numeric fields</li>
+        <li>Ensured OrderDate values were properly formatted</li>
+      </ul>
+      <div class="project-img-wrap">
+        <img src="excel/image1.png" alt="Data Cleaning">
+        <div class="img-caption">Data Cleaning — Raw Dataset View</div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">2</div><h3 class="step-title">Data Preprocessing</h3></div>
+      <p class="step-desc">Created calculated columns to support time-series and revenue analysis:</p>
+      <ul class="styled-list" style="padding-left:52px;">
+        <li>TotalSales = Quantity × UnitPrice</li>
+        <li>NetSales = TotalSales − Discount</li>
+        <li>Month-Year column extracted from OrderDate</li>
+        <li>Quarter-Year column extracted from OrderDate</li>
+      </ul>
+      <div class="img-grid">
+        <div class="project-img-wrap" style="margin-block:0;">
+          <img src="excel/image2.png" alt="Preprocessing Step 1">
+          <div class="img-caption">Calculated Fields</div>
+        </div>
+        <div class="project-img-wrap" style="margin-block:0;">
+          <img src="excel/image3.png" alt="Preprocessing Step 2">
+          <div class="img-caption">Date Columns</div>
+        </div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="excel/image4.png" alt="Preprocessing Step 3">
+        <div class="img-caption">Preprocessed Dataset</div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">3</div><h3 class="step-title">Dataset Structure</h3></div>
+      <p class="step-desc">The retail dataset after preprocessing — all relevant columns used for analysis.</p>
+      <div class="project-img-wrap">
+        <img src="excel/image5.png" alt="Dataset Structure">
+        <div class="img-caption">Final Dataset Structure With All Computed Fields</div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">4</div><h3 class="step-title">Sales Trend Analysis</h3></div>
+      <p class="step-desc">Pivot tables aggregated total orders, total sales, and net sales by Month-Year. A line chart visualizes monthly trends to identify peak and low periods.</p>
+      <div class="project-img-wrap">
+        <img src="excel/image6.png" alt="Sales Trend">
+        <div class="img-caption">Monthly Sales Trend — Line Chart via Pivot Table</div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">5</div><h3 class="step-title">Category & Regional Analysis</h3></div>
+      <p class="step-desc">Separate pivot tables identify the best-selling product categories and compare revenue performance across all store regions.</p>
+      <div class="img-grid">
+        <div class="project-img-wrap" style="margin-block:0;">
+          <img src="excel/image7.png" alt="Category Analysis">
+          <div class="img-caption">Category Performance</div>
+        </div>
+        <div class="project-img-wrap" style="margin-block:0;">
+          <img src="excel/image8.png" alt="Regional Analysis">
+          <div class="img-caption">Regional Breakdown</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">6</div><h3 class="step-title">Discount & Revenue Analysis</h3></div>
+      <p class="step-desc">Discount patterns were analyzed to evaluate whether discount strategies improve or reduce overall profitability — comparing Total Sales vs. Net Sales.</p>
+      <div class="project-img-wrap" style="max-width:340px;">
+        <img src="excel/image9.png" alt="Discount Analysis">
+        <div class="img-caption">Discount Impact Summary</div>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">7</div><h3 class="step-title">Interactive Dashboard</h3></div>
+      <p class="step-desc">The final dashboard brings all analysis into one interactive view:</p>
+      <ul class="styled-list" style="padding-left:52px;margin-block-end:16px;">
+        <li>Line chart — monthly sales trends</li>
+        <li>Bar chart — category performance comparison</li>
+        <li>Stacked bar — regional revenue contribution</li>
+        <li>KPI tiles — Total Orders, Sales, Net Sales, Avg Discount</li>
+        <li>Slicers — Region, Category, Month-Year filters</li>
+      </ul>
+      <div class="project-img-wrap">
+        <img src="excel/excel-dashboard.png" alt="Final Dashboard">
+        <div class="img-caption">Final Interactive Excel Dashboard</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Results -->
+  <div class="content-section" id="results">
+    <p class="section-label">Findings</p>
+    <h2 class="section-heading">Results</h2>
+    <p>The dashboard surfaces key performance signals at a glance. Notable findings by year:</p>
+
+    <div class="metrics-row">
+      <div class="metric-card"><div class="metric-value">Mar</div><div class="metric-label">2023 Low Month</div></div>
+      <div class="metric-card"><div class="metric-value">May</div><div class="metric-label">2023 Peak Month</div></div>
+      <div class="metric-card"><div class="metric-value">Jul</div><div class="metric-label">2024 Low Month</div></div>
+      <div class="metric-card"><div class="metric-value">Apr</div><div class="metric-label">2024 Peak Month</div></div>
+    </div>
+
+    <p>In 2023, March saw the lowest Net Sales (₱111,281) while May peaked at ₱155,424. In 2024, the lowest point shifted to July (₱108,607) while April reached the highest at ₱186,341.</p>
+    <p style="margin-top:12px;">Interactive slicers allow stakeholders to drill into any region, category, or time window without touching the raw data.</p>
+
+    <ul class="result-check" style="margin-block-start:20px;">
+      <li><span class="check-icon">✓</span>Sales trends identified across 2 full years of data</li>
+      <li><span class="check-icon">✓</span>Category and regional leaders and laggards surfaced</li>
+      <li><span class="check-icon">✓</span>Discount impact on net revenue quantified</li>
+      <li><span class="check-icon">✓</span>Interactive dashboard built for self-service exploration</li>
+    </ul>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="content-section" id="recommendations">
+    <p class="section-label">Insights</p>
+    <h2 class="section-heading">Recommendations</h2>
+
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rec-icon">📈</div>
+        <h3 class="rec-title">Sales Trends</h3>
+        <p class="rec-text">Investigate the mid-year dip in July 2024. Introduce seasonal promotions during low months to stabilize revenue throughout the year.</p>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🗺️</div>
+        <h3 class="rec-title">Regional Performance</h3>
+        <p class="rec-text">Analyze East region's 2024 decline. Replicate successful South region strategies in weaker markets to close the performance gap.</p>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">📦</div>
+        <h3 class="rec-title">Category Strategy</h3>
+        <p class="rec-text">Boost inventory and promotions for Home Appliances. Review pricing and marketing for low-performing Groceries to improve contribution.</p>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">🎯</div>
+        <h3 class="rec-title">Overall Focus</h3>
+        <p class="rec-text">Target weak months, regions, and categories with data-backed campaigns. Expand what's working in high-performing segments.</p>
+      </div>
+    </div>
+  </div>
+
+</article>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Table of Contents</p>
+    <nav class="toc-list">
+      <a href="#introduction" class="toc-link">Introduction</a>
+      <a href="#ask" class="toc-link">The Ask</a>
+      <a href="#process" class="toc-link">Process (7 Steps)</a>
+      <a href="#results" class="toc-link">Results</a>
+      <a href="#recommendations" class="toc-link">Recommendations</a>
+    </nav>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Tools Used</p>
+    <div style="margin:-4px;">
+      <span class="tool-badge">📊 Excel</span>
+      <span class="tool-badge">🔄 Pivot Tables</span>
+      <span class="tool-badge">📈 Charts</span>
+      <span class="tool-badge">🔍 VLOOKUP</span>
+      <span class="tool-badge">⚡ XLOOKUP</span>
+      <span class="tool-badge">🧹 Data Cleaning</span>
+      <span class="tool-badge">🎛️ Slicers</span>
+    </div>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Project Info</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <div style="font-family:var(--ff-display);font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-block-end:2px;">Source</div>
+        <div style="font-size:1.4rem;color:var(--text-secondary);">Great Learning</div>
+      </div>
+      <div style="height:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-family:var(--ff-display);font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-block-end:2px;">Data Range</div>
+        <div style="font-family:var(--ff-display);font-size:2rem;font-weight:800;color:var(--accent);">2023 – 2024</div>
+      </div>
+      <div style="height:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-family:var(--ff-display);font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-block-end:2px;">Tool</div>
+        <div style="font-family:var(--ff-display);font-size:1.8rem;font-weight:800;color:var(--text-primary);">Microsoft Excel</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Links</p>
+    <a href="https://1drv.ms/x/c/ae84a5e94ce16a5b/IQAd7lGD82y8TKv3Pv_Jx3YtAWW7pEEc58HpvFzS_0G72gY?e=vTORt7" target="_blank" class="proj-link">
+      <ion-icon name="document-text-outline"></ion-icon> Excel Project File
+    </a>
+    <a href="https://1drv.ms/w/c/ae84a5e94ce16a5b/IQD9ZQs1UTDQS5qxiQ7yjgTYARnHUMWWbylxbQKj8Bd6BQg?e=CDagpd" target="_blank" class="proj-link">
+      <ion-icon name="book-outline"></ion-icon> Project Guide
+    </a>
+    <a href="https://www.linkedin.com/in/myca-santillan-4811a1339/" target="_blank" class="proj-link">
+      <ion-icon name="logo-linkedin"></ion-icon> LinkedIn Profile
+    </a>
+    <a href="https://www.mygreatlearning.com/certificate/FFRBRIBH?referrer_code=GLAQ7TUQ" target="_blank" class="proj-link">
+      <ion-icon name="ribbon-outline"></ion-icon> View Certificate
+    </a>
+  </div>
+</aside>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <a href="index.html" class="logo" style="font-size:1.8rem;">Myca<span>.</span></a>
+    <p class="footer-note">© 2026 Myca M. Santillan · All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Theme
+  const html = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  // Active TOC
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.toc-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => obs.observe(s));
+
+  // Right-click protection
+  document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</body>
+</html>

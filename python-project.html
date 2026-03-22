@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Data Cleaning — Customer Call List · Myca Santillan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<style>
+/* ===== THEME ===== */
+:root {
+  --accent: #e8c547;
+  --accent-dim: rgba(232,197,71,0.1);
+  --accent-glow: rgba(232,197,71,0.25);
+  --ff-display: 'Syne', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+  --ff-code: 'JetBrains Mono', monospace;
+  --radius-card: 16px;
+  --radius-pill: 100px;
+  --transition: 0.3s ease;
+}
+[data-theme="dark"] {
+  --bg: #0d0d10; --bg-card: #14141a; --surface: #1e1e28;
+  --border: rgba(255,255,255,0.07); --text-primary: #f0f0f5;
+  --text-secondary: #8a8aa0; --text-muted: #55556a;
+  --shadow: rgba(0,0,0,0.5); --img-border: rgba(255,255,255,0.1);
+  --code-bg: #0c0c14; --code-border: rgba(255,255,255,0.06);
+  --code-text: #c9d1d9; --code-comment: #6e7681;
+  --code-keyword: #ff7b72; --code-string: #a5d6ff;
+  --code-fn: #d2a8ff; --code-num: #79c0ff; --code-var: #ffa657;
+}
+[data-theme="light"] {
+  --bg: #f5f4f0; --bg-card: #ffffff; --surface: #eeecea;
+  --border: rgba(0,0,0,0.08); --text-primary: #111118;
+  --text-secondary: #555566; --text-muted: #999aaa;
+  --shadow: rgba(0,0,0,0.1); --img-border: rgba(0,0,0,0.1);
+  --code-bg: #161b22; --code-border: rgba(0,0,0,0.15);
+  --code-text: #c9d1d9; --code-comment: #8b949e;
+  --code-keyword: #ff7b72; --code-string: #a5d6ff;
+  --code-fn: #d2a8ff; --code-num: #79c0ff; --code-var: #ffa657;
+}
+
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+li{list-style:none;} a{color:inherit;text-decoration:none;} img{height:auto;display:block;max-width:100%;}
+html{font-size:10px;scroll-behavior:smooth;}
+body{font-family:var(--ff-body);font-size:1.6rem;line-height:1.8;background:var(--bg);color:var(--text-secondary);transition:background .4s ease,color .4s ease;user-select:none;-webkit-user-select:none;}
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:10px;}
+
+/* ===== HEADER ===== */
+.header{position:sticky;top:0;z-index:100;background:rgba(13,13,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding-block:18px;transition:background .4s ease;}
+[data-theme="light"] .header{background:rgba(245,244,240,.92);}
+.header-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);transition:color var(--transition);}
+.back-link:hover{color:var(--accent);}
+.logo{font-family:var(--ff-display);font-size:2rem;font-weight:800;color:var(--text-primary);}
+.logo span{color:var(--accent);}
+.theme-toggle{width:52px;height:28px;background:var(--surface);border-radius:var(--radius-pill);position:relative;cursor:pointer;border:1px solid var(--border);flex-shrink:0;}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--accent);transition:transform .4s cubic-bezier(.68,-.55,.265,1.55);}
+[data-theme="light"] .theme-toggle::after{transform:translateX(24px);}
+.toggle-icon{position:absolute;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none;}
+.toggle-icon.moon{left:5px;} .toggle-icon.sun{right:4px;}
+
+/* ===== HERO ===== */
+.project-hero{background:var(--bg-card);border-bottom:1px solid var(--border);padding-block:64px 48px;}
+.project-hero-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;}
+.project-crumb{display:flex;align-items:center;gap:8px;font-size:1.2rem;font-family:var(--ff-display);font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-block-end:20px;}
+.project-crumb .dot{color:var(--accent);}
+.project-title{font-family:var(--ff-display);font-size:clamp(2.8rem,5vw,4.4rem);font-weight:800;color:var(--text-primary);line-height:1.1;margin-block-end:18px;}
+.project-title span{color:var(--accent);}
+.project-desc{font-size:1.7rem;color:var(--text-secondary);max-width:640px;line-height:1.75;margin-block-end:32px;}
+.project-meta{display:flex;flex-wrap:wrap;gap:12px;}
+.meta-tag{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:6px 14px;border-radius:var(--radius-pill);}
+.meta-tag.accent{background:var(--accent-dim);border-color:rgba(232,197,71,.3);color:var(--accent);}
+
+/* ===== LAYOUT ===== */
+.content-wrap{max-width:1060px;margin-inline:auto;padding:60px 24px;display:grid;grid-template-columns:1fr 260px;gap:60px;align-items:start;}
+.content-section{margin-block-end:60px;padding-block-end:60px;border-bottom:1px solid var(--border);}
+.content-section:last-child{border-bottom:none;margin-block-end:0;}
+.section-label{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-block-end:10px;}
+.section-heading{font-family:var(--ff-display);font-size:clamp(2rem,3vw,2.8rem);font-weight:800;color:var(--text-primary);margin-block-end:20px;line-height:1.2;}
+p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
+
+/* Lists */
+.styled-list{display:flex;flex-direction:column;gap:10px;margin-block:16px;}
+.styled-list li{display:flex;align-items:flex-start;gap:10px;font-size:1.55rem;color:var(--text-secondary);}
+.styled-list li::before{content:'▸';color:var(--accent);font-size:1.2rem;flex-shrink:0;margin-top:3px;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-block:28px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:border-color var(--transition),transform var(--transition);}
+.stat-card:hover{border-color:rgba(232,197,71,.4);transform:translateY(-3px);}
+.stat-value{font-family:var(--ff-display);font-size:2.2rem;font-weight:800;color:var(--accent);line-height:1;}
+.stat-label{font-size:1.2rem;color:var(--text-muted);margin-top:4px;font-family:var(--ff-display);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+
+/* ===== STEP BLOCK ===== */
+.step-block{margin-block:32px;position:relative;}
+.step-header{display:flex;align-items:center;gap:16px;margin-block-end:16px;}
+.step-badge{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#111;font-family:var(--ff-display);font-size:1.4rem;font-weight:800;display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 0 4px var(--accent-dim);}
+.step-title{font-family:var(--ff-display);font-size:1.8rem;font-weight:700;color:var(--text-primary);}
+.step-desc{font-size:1.55rem;color:var(--text-secondary);margin-block-end:16px;padding-left:52px;}
+
+/* ===== CODE BLOCK ===== */
+.code-wrap{margin-block:16px;border-radius:12px;overflow:hidden;border:1px solid var(--code-border);box-shadow:0 4px 20px var(--shadow);}
+.code-header{background:var(--surface);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--code-border);}
+.code-dots{display:flex;gap:6px;}
+.code-dot{width:11px;height:11px;border-radius:50%;}
+.code-dot:nth-child(1){background:#ff5f56;}
+.code-dot:nth-child(2){background:#ffbd2e;}
+.code-dot:nth-child(3){background:#27c93f;}
+.code-lang{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);}
+.copy-btn{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);cursor:pointer;transition:color var(--transition);background:none;border:none;display:flex;align-items:center;gap:6px;}
+.copy-btn:hover{color:var(--accent);}
+.copy-btn ion-icon{font-size:1.4rem;}
+.code-body{background:var(--code-bg);padding:22px 24px;overflow-x:auto;}
+.code-body pre{margin:0;font-family:var(--ff-code);font-size:1.35rem;line-height:1.7;color:var(--code-text);}
+
+/* Syntax highlight classes */
+.kw{color:var(--code-keyword);}    /* keywords: import, def, for, if */
+.fn{color:var(--code-fn);}         /* functions */
+.st{color:var(--code-string);}     /* strings */
+.nm{color:var(--code-num);}        /* numbers, regex */
+.vr{color:var(--code-var);}        /* variables, attributes */
+.cm{color:var(--code-comment);}    /* comments */
+.op{color:#e3b341;}                /* operators */
+
+/* Images */
+.project-img-wrap{margin-block:20px;border-radius:12px;overflow:hidden;border:1px solid var(--img-border);box-shadow:0 8px 30px var(--shadow);}
+.project-img-wrap img{width:100%;display:block;transition:transform .4s ease;}
+.project-img-wrap:hover img{transform:scale(1.01);}
+.img-caption{background:var(--surface);padding:10px 16px;font-size:1.2rem;color:var(--text-muted);font-family:var(--ff-display);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;}
+
+/* Rec + result boxes */
+.rec-box{background:var(--accent-dim);border:1px solid rgba(232,197,71,.25);border-radius:12px;padding:20px 24px;margin-block-start:16px;}
+.rec-box-label{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-block-end:10px;}
+.rec-box ul{display:flex;flex-direction:column;gap:8px;}
+.rec-box ul li{display:flex;align-items:flex-start;gap:8px;font-size:1.5rem;color:var(--text-secondary);}
+.rec-box ul li::before{content:'→';color:var(--accent);flex-shrink:0;}
+
+/* Pipeline visual */
+.pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-block:28px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;overflow:hidden;}
+.pipe-step{display:flex;align-items:center;gap:0;}
+.pipe-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:var(--ff-display);font-size:1.2rem;font-weight:700;color:var(--text-secondary);white-space:nowrap;transition:border-color var(--transition),color var(--transition);}
+.pipe-node:hover{border-color:var(--accent);color:var(--accent);}
+.pipe-arrow{color:var(--text-muted);font-size:1.4rem;padding-inline:6px;flex-shrink:0;}
+
+/* Sidebar */
+.sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:20px;}
+.sidebar-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-card);padding:24px;}
+.sidebar-card-title{font-family:var(--ff-display);font-size:1.2rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-block-end:16px;}
+.toc-list{display:flex;flex-direction:column;gap:4px;}
+.toc-link{display:flex;align-items:center;gap:8px;font-size:1.35rem;color:var(--text-secondary);padding:7px 10px;border-radius:8px;transition:background var(--transition),color var(--transition);font-family:var(--ff-display);font-weight:600;}
+.toc-link:hover,.toc-link.active{background:var(--accent-dim);color:var(--accent);}
+.toc-link::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.tool-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--ff-display);font-size:1.2rem;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);margin:4px;}
+.proj-link{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:1.4rem;color:var(--text-secondary);transition:color var(--transition);font-family:var(--ff-display);font-weight:600;}
+.proj-link:last-child{border-bottom:none;} .proj-link:hover{color:var(--accent);} .proj-link ion-icon{font-size:1.8rem;flex-shrink:0;}
+
+/* Footer */
+.footer{background:var(--bg-card);border-top:1px solid var(--border);padding-block:32px;}
+.footer-inner{max-width:1060px;margin-inline:auto;padding-inline:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.footer-note{font-size:1.3rem;color:var(--text-muted);}
+
+/* Responsive */
+@media(max-width:768px){
+  .content-wrap{grid-template-columns:1fr;padding:40px 20px;}
+  .sidebar{position:static;}
+  .pipeline{gap:8px;}
+  .step-desc{padding-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="back-link"><ion-icon name="arrow-back-outline"></ion-icon> Back</a>
+    <a href="index.html" class="logo">Myca<span>.</span></a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="toggle-icon moon">🌙</span>
+      <span class="toggle-icon sun">☀️</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="project-hero">
+  <div class="project-hero-inner">
+    <div class="project-crumb">
+      <span>Portfolio</span><span class="dot">✦</span><span>Python</span>
+    </div>
+    <h1 class="project-title">Customer Call List<br><span>Data Cleaning</span></h1>
+    <p class="project-desc">
+      Transforming a messy, inconsistent customer dataset into a clean, analysis-ready call list using Python and pandas — removing duplicates, standardizing formats, and filtering invalid records.
+    </p>
+    <div class="project-meta">
+      <span class="meta-tag accent">🐍 Python</span>
+      <span class="meta-tag">pandas</span>
+      <span class="meta-tag">Data Cleaning</span>
+      <span class="meta-tag">Regex</span>
+      <span class="meta-tag">Kaggle Certified</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="content-wrap">
+<article class="article">
+
+  <!-- Preview + Stats -->
+  <div class="content-section">
+    <div class="project-img-wrap">
+      <img src="python/python-image.jpg" alt="Python Data Cleaning">
+      <div class="img-caption">Python & Pandas — Customer Call List Cleaning</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value">11</div><div class="stat-label">Steps</div></div>
+      <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Fixes Applied</div></div>
+      <div class="stat-card"><div class="stat-value">🐍</div><div class="stat-label">Python</div></div>
+      <div class="stat-card"><div class="stat-value">✓</div><div class="stat-label">Certified</div></div>
+    </div>
+  </div>
+
+  <!-- Introduction -->
+  <div class="content-section" id="introduction">
+    <p class="section-label">Overview</p>
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+      This project focuses on cleaning and preprocessing a customer call list dataset using Python and
+      <strong style="color:var(--text-primary);">pandas</strong>. Guided by tutorials from
+      <strong style="color:var(--text-primary);">Alex The Analyst</strong>, it emphasizes transforming
+      messy raw data into a clean, structured format ready for analysis or operational use.
+    </p>
+    <p>
+      Key tasks included removing duplicates, correcting text values, standardizing phone numbers,
+      handling missing data, and splitting address information. I earned a
+      <a href="https://www.kaggle.com/learn/certification/mycamoradas/python" target="_blank"
+         style="color:var(--accent);">Python certification from Kaggle</a> while completing this project.
+    </p>
+  </div>
+
+  <!-- Ask -->
+  <div class="content-section" id="ask">
+    <p class="section-label">Problem Statement</p>
+    <h2 class="section-heading">The Ask</h2>
+    <p>The dataset contained inconsistencies, missing values, and formatting issues that made it unreliable for customer outreach. The objectives were:</p>
+    <ul class="styled-list">
+      <li>Remove duplicates and unnecessary columns</li>
+      <li>Standardize customer names, phone numbers, and address fields</li>
+      <li>Handle missing values appropriately</li>
+      <li>Filter out customers who requested not to be contacted</li>
+      <li>Produce a clean, analysis-ready dataset</li>
+    </ul>
+
+    <!-- Pipeline -->
+    <div class="pipeline">
+      <div class="pipe-step"><div class="pipe-node">Raw Data</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Remove Dupes</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Drop Columns</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Clean Names</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Format Phones</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Split Address</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node">Filter</div><span class="pipe-arrow">→</span></div>
+      <div class="pipe-step"><div class="pipe-node" style="border-color:rgba(232,197,71,.4);color:var(--accent);">Clean Data ✓</div></div>
+    </div>
+  </div>
+
+  <!-- Process -->
+  <div class="content-section" id="process">
+    <p class="section-label">Methodology</p>
+    <h2 class="section-heading">Process</h2>
+
+    <!-- Step 1 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">1</div><h3 class="step-title">Load the Dataset</h3></div>
+      <p class="step-desc">Import pandas and load the Excel file containing the customer call list.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="import pandas as pd&#10;df = pd.read_excel(&quot;Customer Call List.xlsx&quot;)&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+df <span class="op">=</span> pd.<span class="fn">read_excel</span>(<span class="st">"Customer Call List.xlsx"</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image1.png" alt="Raw Dataset">
+        <div class="img-caption">Raw Dataset After Loading</div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">2</div><h3 class="step-title">Remove Duplicates</h3></div>
+      <p class="step-desc">Drop any duplicate rows to ensure every customer record is unique.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df = df.drop_duplicates()&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df <span class="op">=</span> df.<span class="fn">drop_duplicates</span>()
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image2.png" alt="After Remove Duplicates">
+        <div class="img-caption">Dataset After Removing Duplicates</div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">3</div><h3 class="step-title">Remove Irrelevant Columns</h3></div>
+      <p class="step-desc">Drop columns that serve no analytical purpose to reduce dataset noise.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df = df.drop(columns = "Not_Useful_Column")&#10;df'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df <span class="op">=</span> df.<span class="fn">drop</span>(columns <span class="op">=</span> <span class="st">"Not_Useful_Column"</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image3.png" alt="After Drop Column">
+        <div class="img-caption">Column Dropped Successfully</div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">4</div><h3 class="step-title">Clean & Standardize Names</h3></div>
+      <p class="step-desc">Strip stray characters like numbers, dots, slashes, and underscores from Last_Name entries.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df["Last_Name"] = df["Last_Name"].str.strip("123._/")&#10;df'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Last_Name"</span>] <span class="op">=</span> df[<span class="st">"Last_Name"</span>].str.<span class="fn">strip</span>(<span class="st">"123._/"</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image4.png" alt="Cleaned Names">
+        <div class="img-caption">Last Names After Cleaning</div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">5</div><h3 class="step-title">Standardize Phone Numbers</h3></div>
+      <p class="step-desc">Strip all special characters, cast to string, reformat to <code style="background:var(--surface);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.3rem;">000-000-0000</code>, then clear invalid entries.</p>
+
+      <p style="font-family:var(--ff-display);font-size:1.3rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-block:12px 6px;">Remove special characters</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df["Phone_Number"] = df["Phone_Number"].str.replace("[^a-zA-Z0-9]", "", regex=True)'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Phone_Number"</span>] <span class="op">=</span> df[<span class="st">"Phone_Number"</span>].str.<span class="fn">replace</span>(<span class="nm">'[^a-zA-Z0-9]'</span>, <span class="st">''</span>, regex<span class="op">=</span><span class="kw">True</span>)</code></pre></div>
+      </div>
+
+      <p style="font-family:var(--ff-display);font-size:1.3rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-block:12px 6px;">Convert to string</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df["Phone_Number"] = df["Phone_Number"].apply(lambda x: str(x))'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Phone_Number"</span>] <span class="op">=</span> df[<span class="st">"Phone_Number"</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> x: <span class="fn">str</span>(x))</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image6.png" alt="Phone Numbers as Strings">
+        <div class="img-caption">Phone Numbers Converted to String</div>
+      </div>
+
+      <p style="font-family:var(--ff-display);font-size:1.3rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-block:12px 6px;">Format as 000-000-0000</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df["Phone_Number"] = df["Phone_Number"].apply(lambda x: x[0:3] + "-" + x[3:6] + "-" + x[6:10])'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Phone_Number"</span>] <span class="op">=</span> df[<span class="st">"Phone_Number"</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> x: x[<span class="nm">0</span>:<span class="nm">3</span>] <span class="op">+</span> <span class="st">'-'</span> <span class="op">+</span> x[<span class="nm">3</span>:<span class="nm">6</span>] <span class="op">+</span> <span class="st">'-'</span> <span class="op">+</span> x[<span class="nm">6</span>:<span class="nm">10</span>]
+)</code></pre></div>
+      </div>
+
+      <p style="font-family:var(--ff-display);font-size:1.3rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-block:12px 6px;">Remove blank phone numbers</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df[&quot;Phone_Number&quot;] = df[&quot;Phone_Number&quot;].replace(['nan--','Na--'],'')&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Phone_Number"</span>] <span class="op">=</span> df[<span class="st">"Phone_Number"</span>].<span class="fn">replace</span>([<span class="st">'nan--'</span>, <span class="st">'Na--'</span>], <span class="st">''</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image7.png" alt="Formatted Phone Numbers">
+        <div class="img-caption">Phone Numbers Formatted & Cleaned</div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">6</div><h3 class="step-title">Split Address Into Structured Fields</h3></div>
+      <p class="step-desc">Expand the single Address column into separate Street Address, State, and Zip Code columns using comma as the delimiter.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code='df[["Street Address","State","Zip_Code"]] = df["Address"].str.split(",", n=2, expand=True)&#10;df'>
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[[<span class="st">"Street Address"</span>, <span class="st">"State"</span>, <span class="st">"Zip_Code"</span>]] <span class="op">=</span> \
+    df[<span class="st">"Address"</span>].str.<span class="fn">split</span>(<span class="st">','</span>, n<span class="op">=</span><span class="nm">2</span>, expand<span class="op">=</span><span class="kw">True</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image8.png" alt="Address Split">
+        <div class="img-caption">Address Split Into Three Columns</div>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">7</div><h3 class="step-title">Standardize Categorical Values</h3></div>
+      <p class="step-desc">Normalize "Yes"/"No" values to "Y"/"N" in the Paying Customer and Do_Not_Contact columns for consistency.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df[&quot;Paying Customer&quot;] = df[&quot;Paying Customer&quot;].replace({'Yes':'Y','No':'N'})&#10;df[&quot;Do_Not_Contact&quot;] = df[&quot;Do_Not_Contact&quot;].replace({'Yes':'Y','No':'N'})&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df[<span class="st">"Paying Customer"</span>] <span class="op">=</span> df[<span class="st">"Paying Customer"</span>].<span class="fn">replace</span>({<span class="st">'Yes'</span>: <span class="st">'Y'</span>, <span class="st">'No'</span>: <span class="st">'N'</span>})
+df[<span class="st">"Do_Not_Contact"</span>]  <span class="op">=</span> df[<span class="st">"Do_Not_Contact"</span>].<span class="fn">replace</span>({<span class="st">'Yes'</span>: <span class="st">'Y'</span>, <span class="st">'No'</span>: <span class="st">'N'</span>})
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image9.png" alt="Categorical Values Standardized">
+        <div class="img-caption">Categorical Values Normalized to Y / N</div>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">8</div><h3 class="step-title">Handle Missing Values</h3></div>
+      <p class="step-desc">Replace all remaining NaN values with empty strings to prevent errors during downstream analysis.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df = df.fillna('')&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df <span class="op">=</span> df.<span class="fn">fillna</span>(<span class="st">''</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image10.png" alt="Missing Values Filled">
+        <div class="img-caption">NaN Values Replaced With Empty Strings</div>
+      </div>
+    </div>
+
+    <!-- Step 9 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">9</div><h3 class="step-title">Filter Do-Not-Contact Customers</h3></div>
+      <p class="step-desc">Remove any records where the customer opted out of being contacted.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df = df[df[&quot;Do_Not_Contact&quot;] != 'Y']&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df <span class="op">=</span> df[df[<span class="st">"Do_Not_Contact"</span>] <span class="op">!=</span> <span class="st">'Y'</span>]
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image11.png" alt="Filtered Opt-Outs">
+        <div class="img-caption">Do-Not-Contact Records Removed</div>
+      </div>
+    </div>
+
+    <!-- Step 10 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">10</div><h3 class="step-title">Remove Rows With Blank Phone Numbers</h3></div>
+      <p class="step-desc">Drop any remaining records where phone numbers are empty — contacts must be reachable.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df = df[df[&quot;Phone_Number&quot;] != '']&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df <span class="op">=</span> df[df[<span class="st">"Phone_Number"</span>] <span class="op">!=</span> <span class="st">''</span>]
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image12.png" alt="Blank Phones Removed">
+        <div class="img-caption">Records With No Phone Number Removed</div>
+      </div>
+    </div>
+
+    <!-- Step 11 -->
+    <div class="step-block">
+      <div class="step-header"><div class="step-badge">11</div><h3 class="step-title">Reset Index</h3></div>
+      <p class="step-desc">Reset the DataFrame index to be sequential after all filtering operations.</p>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="code-lang">Python</span>
+          <button class="copy-btn" data-code="df.reset_index(drop=True, inplace=True)&#10;df">
+            <ion-icon name="copy-outline"></ion-icon> Copy
+          </button>
+        </div>
+        <div class="code-body"><pre><code>df.<span class="fn">reset_index</span>(drop<span class="op">=</span><span class="kw">True</span>, inplace<span class="op">=</span><span class="kw">True</span>)
+df</code></pre></div>
+      </div>
+      <div class="project-img-wrap">
+        <img src="python/image13.png" alt="Final Clean Dataset">
+        <div class="img-caption">Final Clean Dataset — Index Reset</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Results -->
+  <div class="content-section" id="results">
+    <p class="section-label">Outcome</p>
+    <h2 class="section-heading">Results</h2>
+    <p>The final dataset was clean, structured, and fully ready for analysis or operational use:</p>
+    <ul class="styled-list">
+      <li>Duplicate and irrelevant data removed entirely</li>
+      <li>Consistent formatting applied to names, phone numbers, and addresses</li>
+      <li>Missing or inconsistent values handled without data loss</li>
+      <li>Dataset filtered to only contactable, eligible customers</li>
+      <li>Sequential index restored for clean referencing</li>
+    </ul>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="content-section" id="recommendations">
+    <p class="section-label">Best Practices</p>
+    <h2 class="section-heading">Recommendations</h2>
+    <div class="rec-box">
+      <p class="rec-box-label">💡 For Future Projects</p>
+      <ul>
+        <li>Implement automated data validation to catch formatting errors at the source</li>
+        <li>Standardize text and numeric fields during data entry to minimize manual cleaning</li>
+        <li>Maintain a consistent customer contact policy to avoid unnecessary removals</li>
+        <li>Document cleaning procedures for reproducibility and team collaboration</li>
+      </ul>
+    </div>
+  </div>
+
+</article>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Table of Contents</p>
+    <nav class="toc-list">
+      <a href="#introduction" class="toc-link">Introduction</a>
+      <a href="#ask" class="toc-link">The Ask</a>
+      <a href="#process" class="toc-link">Process (11 Steps)</a>
+      <a href="#results" class="toc-link">Results</a>
+      <a href="#recommendations" class="toc-link">Recommendations</a>
+    </nav>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Tools Used</p>
+    <div style="margin:-4px;">
+      <span class="tool-badge">🐍 Python</span>
+      <span class="tool-badge">🐼 pandas</span>
+      <span class="tool-badge">🔤 Regex</span>
+      <span class="tool-badge">📓 Jupyter</span>
+      <span class="tool-badge">📊 Excel</span>
+    </div>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">What Was Cleaned</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Duplicate rows
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Junk columns
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Name formatting
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Phone numbers
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Address splitting
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Missing values
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:1.35rem;color:var(--text-secondary);">
+        <span style="color:var(--accent);font-size:1.8rem;line-height:1;">✓</span> Opt-out filter
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-card">
+    <p class="sidebar-card-title">Links</p>
+    <a href="https://github.com/mycasantillan26/Data-Analyst/blob/main/MYCA/Data%20Analyst%20Study/Data%20Cleaning%20in%20Pandas/Customer%20Call%20List.xlsx" target="_blank" class="proj-link">
+      <ion-icon name="document-text-outline"></ion-icon> View Raw Data
+    </a>
+    <a href="https://github.com/mycasantillan26/Data-Analyst/blob/main/MYCA/Data%20Analyst%20Study/Data%20Cleaning%20in%20Pandas/Santillan%20-%20Data%20Cleaning%20in%20Pandas.ipynb" target="_blank" class="proj-link">
+      <ion-icon name="logo-github"></ion-icon> Jupyter Notebook
+    </a>
+    <a href="https://www.linkedin.com/in/myca-santillan-4811a1339/" target="_blank" class="proj-link">
+      <ion-icon name="logo-linkedin"></ion-icon> LinkedIn Profile
+    </a>
+    <a href="https://www.kaggle.com/learn/certification/mycamoradas/python" target="_blank" class="proj-link">
+      <ion-icon name="ribbon-outline"></ion-icon> Kaggle Certificate
+    </a>
+  </div>
+</aside>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <a href="index.html" class="logo" style="font-size:1.8rem;">Myca<span>.</span></a>
+    <p class="footer-note">© 2026 Myca M. Santillan · All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Theme
+  const html = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.dataset.code.replace(/&#10;/g, '\n').replace(/&quot;/g, '"');
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<ion-icon name="checkmark-outline"></ion-icon> Copied!';
+        btn.style.color = 'var(--accent)';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+      });
+    });
+  });
+
+  // Active TOC
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.toc-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => obs.observe(s));
+
+  // Right-click protection
+  document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</body>
+</html>
