@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
+
 </head>
 
 <body>
@@ -78,7 +79,7 @@
     <div class="hero-image-wrap">
       <div class="hero-blob">
         <img src="./images/intro-bg.jpg" alt="Myca Santillan" class="static-img">
-        <img src="./images/animated.png" alt="Animated" class="hover-img">
+        <img src="./images/animated.PNG" alt="Animated" class="hover-img">
       </div>
       <div class="hero-stats">
         <div class="stat-number">6+</div>
@@ -348,7 +349,14 @@
       <div>
         <p class="footer-contact-title">Get in Touch</p>
         <ul class="footer-contact-list">
-          <li><a href="/cdn-cgi/l/email-protection#bdd0c4dedccedcd3c9d4d1d1dcd38afddad0dcd4d193ded2d0" class="footer-contact-link"><ion-icon name="mail-outline"></ion-icon> <span class="__cf_email__" data-cfemail="761b0f1517051718021f1a1a17184136111b171f1a5815191b">[email&#160;protected]</span></a></li>
+          <li>
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mycasantillan7@gmail.com"
+               target="_blank"
+               class="footer-contact-link">
+              <ion-icon name="mail-outline"></ion-icon>
+              <span>mycasantillan7@gmail.com</span>
+            </a>
+          </li>
           <li><a href="tel:+639624080347" class="footer-contact-link"><ion-icon name="call-outline"></ion-icon> +63 962 408 0347</a></li>
           <li><a href="./documents/CV_Santillan1.pdf" class="footer-contact-link" target="_blank"><ion-icon name="document-outline"></ion-icon> Download CV</a></li>
         </ul>
@@ -362,7 +370,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── Theme Toggle ──
   const html = document.documentElement;
   const themeToggle = document.getElementById('themeToggle');
@@ -435,6 +443,15 @@
       });
     });
   });
+
+  // ── Hero Blob Hover ──
+  const heroBlob = document.querySelector('.hero-blob');
+  if (heroBlob) {
+    heroBlob.addEventListener('mouseenter', () => heroBlob.classList.add('hovered'));
+    heroBlob.addEventListener('mouseleave', () => heroBlob.classList.remove('hovered'));
+    // Touch support
+    heroBlob.addEventListener('touchstart', () => heroBlob.classList.toggle('hovered'), { passive: true });
+  }
 
   // ── Fade Up ──
   const fadeEls = document.querySelectorAll('.fade-up');
