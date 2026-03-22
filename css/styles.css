@@ -75,10 +75,10 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background-color: var(--accent); border-radius: 10px; }
 
-.container { 
-  max-width: 1140px; 
-  margin-inline: auto; 
-  padding-inline: 20px; 
+.container {
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 20px;
 }
 
 .section { padding-block: var(--section-padding); }
@@ -383,23 +383,32 @@ h1, h2, h3, h4 {
   animation: blobAnim 28s linear infinite;
   position: relative;
   box-shadow: 0 0 60px var(--accent-glow);
+  cursor: pointer;
 }
 
 .hero-blob img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.5s ease;
 }
 
+/* ===== HOVER IMAGE FIX ===== */
+/* Use JS class .hovered instead of CSS :hover
+   because animated border-radius breaks the CSS hit area in production */
 .hero-blob .hover-img {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   opacity: 0;
   pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.hero-blob:hover .hover-img { opacity: 1; }
+.hero-blob.hovered .hover-img {
+  opacity: 1;
+}
 
 .hero-stats {
   position: absolute;
@@ -448,10 +457,7 @@ h1, h2, h3, h4 {
   margin-block-end: 32px;
 }
 
-/* Skills */
 .skills-list { display: flex; flex-direction: column; gap: 24px; }
-
-.skill-item {}
 
 .skill-header {
   display: flex;
@@ -486,6 +492,7 @@ h1, h2, h3, h4 {
   background: linear-gradient(90deg, var(--accent) 0%, #f5d56e 100%);
   border-radius: inherit;
   transform-origin: left;
+  width: calc(var(--w, 0) * 100%);
   transform: scaleX(0);
   transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -504,8 +511,9 @@ h1, h2, h3, h4 {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   overflow: hidden;
-  transition: transform var(--transition-2), border-color var(--transition-1), box-shadow var(--transition-2);
   position: relative;
+  transition: transform var(--transition-2), border-color var(--transition-1),
+              box-shadow var(--transition-2), opacity 0.35s ease;
 }
 
 .portfolio-card:hover {
@@ -555,9 +563,7 @@ h1, h2, h3, h4 {
 
 .portfolio-card:hover .card-overlay .view-btn { transform: translateY(0); }
 
-.card-body {
-  padding: 24px;
-}
+.card-body { padding: 24px; }
 
 .card-category {
   font-size: var(--fs-8);
@@ -583,9 +589,61 @@ h1, h2, h3, h4 {
   line-height: 1.7;
 }
 
-/* ===== CERTIFICATES ===== */
-.certificates { background: var(--bg); }
+.portfolio-card.hidden { display: none; }
 
+/* ===== FILTER BUTTONS ===== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-block-end: 36px;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-8);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 9px 20px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-1), color var(--transition-1),
+              background var(--transition-1), transform var(--transition-1);
+}
+
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.filter-btn .count {
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 20px;
+  line-height: 1.6;
+}
+
+.filter-btn.active .count { background: rgba(0,0,0,0.2); }
+
+/* ===== CERTIFICATES ===== */
 .certs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -608,10 +666,8 @@ h1, h2, h3, h4 {
 .cert-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
   background: var(--accent);
   transform: scaleY(0);
   transform-origin: top;
@@ -633,8 +689,7 @@ h1, h2, h3, h4 {
 }
 
 .cert-logo {
-  width: 46px;
-  height: 46px;
+  width: 46px; height: 46px;
   border-radius: 10px;
   display: grid;
   place-items: center;
@@ -699,70 +754,6 @@ h1, h2, h3, h4 {
 
 .cert-link:hover { gap: 12px; }
 
-/* ===== FILTER BUTTONS ===== */
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-block-end: 36px;
-}
-
-.filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--ff-display);
-  font-size: var(--fs-8);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 9px 20px;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid var(--border);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: border-color var(--transition-1), color var(--transition-1),
-              background var(--transition-1), transform var(--transition-1);
-}
-
-.filter-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-dim);
-}
-
-.filter-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #111;
-  box-shadow: 0 4px 16px var(--accent-glow);
-}
-
-.filter-btn .count {
-  background: rgba(0,0,0,0.15);
-  color: inherit;
-  font-size: 1rem;
-  font-weight: 800;
-  padding: 1px 7px;
-  border-radius: 20px;
-  line-height: 1.6;
-}
-
-.filter-btn.active .count {
-  background: rgba(0,0,0,0.2);
-}
-
-/* Card hide/show animation */
-.portfolio-card {
-  transition: transform var(--transition-2), border-color var(--transition-1),
-              box-shadow var(--transition-2), opacity 0.35s ease;
-}
-
-.portfolio-card.hidden {
-  display: none;
-}
-
 /* ===== FOOTER ===== */
 .footer {
   background: var(--bg-card);
@@ -821,8 +812,7 @@ h1, h2, h3, h4 {
 }
 
 .social-link {
-  width: 44px;
-  height: 44px;
+  width: 44px; height: 44px;
   display: grid;
   place-items: center;
   border: 1.5px solid var(--border);
