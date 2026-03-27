@@ -316,36 +316,35 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
       <p class="step-card-title">Standardize Salary Column</p>
       <ol class="instruction-list">
         <li><span class="step-num">1</span> Duplicate the salary column to preserve original data</li>
-        <li><span class="step-num">2</span> Use <strong style="color:var(--text-primary);">Split Column → By Digit to Non-Digit</strong></li>
-        <li><span class="step-num">3</span> Remove the column containing "k" suffix values</li>
-        <li><span class="step-num">4</span> Use <strong style="color:var(--text-primary);">Replace Values</strong> to strip <code style="background:var(--surface);padding:2px 7px;border-radius:4px;font-size:1.3rem;">-</code> and <code style="background:var(--surface);padding:2px 7px;border-radius:4px;font-size:1.3rem;">k</code></li>
-        <li><span class="step-num">5</span> Convert to numeric data type</li>
-      </ol>
-      <div class="img-grid">
         <div class="project-img-wrap" style="margin-block:0;">
           <img src="powerbi/image14.png" alt="Duplicate Column">
           <div class="img-caption">Duplicate Salary Column</div>
         </div>
-        <div class="project-img-wrap" style="margin-block:0;">
-          <img src="powerbi/image16.png" alt="Split Digit">
-          <div class="img-caption">Split by Digit to Non-Digit</div>
+        <li><span class="step-num">2</span> Use <strong style="color:var(--text-primary);">Split Column → By Digit to Non-Digit</strong></li>
+        <div class="project-img-wrap">
+          <img src="powerbi/image16.png" alt="After Salary Clean">
+          <div class="img-caption">Split Column</div>
+        <li><span class="step-num">3</span> Remove the column containing "k" suffix values</li>
+        <div class="project-img-wrap">
+          <img src="powerbi/image17.png" alt="After Salary Clean">
+          <div class="img-caption">Salary Values After Splitting</div>
         </div>
-      </div>
-      <div class="project-img-wrap">
-        <img src="powerbi/image17.png" alt="After Salary Clean">
-        <div class="img-caption">Salary Values After Splitting</div>
-      </div>
-      <div class="img-grid">
+        <li><span class="step-num">4</span> Use <strong style="color:var(--text-primary);">Replace Values</strong> to strip <code style="background:var(--surface);padding:2px 7px;border-radius:4px;font-size:1.3rem;">-</code> and <code style="background:var(--surface);padding:2px 7px;border-radius:4px;font-size:1.3rem;">k</code></li>
         <div class="project-img-wrap" style="margin-block:0;">
           <img src="powerbi/image18.png" alt="Replace Values">
-          <div class="img-caption">Replace Values Dialog</div>
+          <div class="img-caption">Replace "k" Values Dialog</div>
         </div>
+        <div class="project-img-wrap" style="margin-block:0;">
+          <img src="powerbi/image19.png" alt="Replace Values">
+          <div class="img-caption">Replace "-" Values Dialog</div>
+        </div>
+        <li><span class="step-num">5</span> Convert to numeric data type</li>
         <div class="project-img-wrap" style="margin-block:0;">
           <img src="powerbi/image20.png" alt="Numeric Salary">
           <div class="img-caption">Final Numeric Salary Values</div>
         </div>
-      </div>
-    </div>
+      </ol>
+    
 
     <div class="step-card">
       <p class="step-card-title">Create Average Salary Column</p>
@@ -354,7 +353,7 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
         <li><span class="step-num">2</span> Name it <strong style="color:var(--text-primary);">Average Salary</strong></li>
         <li><span class="step-num">3</span> Formula: <code style="background:var(--surface);padding:2px 7px;border-radius:4px;font-size:1.3rem;">([SalaryMin] + [SalaryMax]) / 2</code></li>
       </ol>
-      <div class="img-grid">
+     
         <div class="project-img-wrap" style="margin-block:0;">
           <img src="powerbi/image21.png" alt="Custom Column">
           <div class="img-caption">Custom Column Formula</div>
@@ -363,7 +362,6 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
           <img src="powerbi/image23.png" alt="Average Salary Result">
           <div class="img-caption">Average Salary Column Result</div>
         </div>
-      </div>
     </div>
 
     <div class="project-img-wrap" style="margin-block-start:32px;">
@@ -424,6 +422,10 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
         <div class="data-bar-track"><div class="data-bar-fill" data-w="0.68"></div></div>
       </div>
       <div class="data-bar-item">
+        <div class="data-bar-header"><span class="data-bar-label">Other</span><span class="data-bar-val">$60.49k</span></div>
+        <div class="data-bar-track"><div class="data-bar-fill" data-w="0.64"></div></div>
+      </div>
+      <div class="data-bar-item">
         <div class="data-bar-header"><span class="data-bar-label">Data Analyst</span><span class="data-bar-val">$55.30k</span></div>
         <div class="data-bar-track"><div class="data-bar-fill" data-w="0.59"></div></div>
       </div>
@@ -438,24 +440,69 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
     </div>
 
     <h3 class="sub-heading">Favorite Programming Language</h3>
-    <div class="data-bars">
-      <div class="data-bar-item">
-        <div class="data-bar-header"><span class="data-bar-label">Python</span><span class="data-bar-val">225</span></div>
-        <div class="data-bar-track"><div class="data-bar-fill" data-w="1"></div></div>
-      </div>
-      <div class="data-bar-item">
-        <div class="data-bar-header"><span class="data-bar-label">R</span><span class="data-bar-val">15</span></div>
-        <div class="data-bar-track"><div class="data-bar-fill" data-w="0.067"></div></div>
-      </div>
-      <div class="data-bar-item">
-        <div class="data-bar-header"><span class="data-bar-label">Other</span><span class="data-bar-val">13</span></div>
-        <div class="data-bar-track"><div class="data-bar-fill" data-w="0.058"></div></div>
-      </div>
-      <div class="data-bar-item">
-        <div class="data-bar-header"><span class="data-bar-label">C / C++</span><span class="data-bar-val">5</span></div>
-        <div class="data-bar-track"><div class="data-bar-fill" data-w="0.022"></div></div>
-      </div>
+<div class="data-bars">
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">Python</span>
+      <span class="data-bar-val">417</span>
     </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="1"></div>
+    </div>
+  </div>
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">Other</span>
+      <span class="data-bar-val">94</span>
+    </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="0.225"></div>
+    </div>
+  </div>
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">R</span>
+      <span class="data-bar-val">90</span>
+    </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="0.216"></div>
+    </div>
+  </div>
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">C / C++</span>
+      <span class="data-bar-val">7</span>
+    </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="0.017"></div>
+    </div>
+  </div>
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">JavaScript</span>
+      <span class="data-bar-val">4</span>
+    </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="0.010"></div>
+    </div>
+  </div>
+
+  <div class="data-bar-item">
+    <div class="data-bar-header">
+      <span class="data-bar-label">Java</span>
+      <span class="data-bar-val">2</span>
+    </div>
+    <div class="data-bar-track">
+      <div class="data-bar-fill" data-w="0.005"></div>
+    </div>
+  </div>
+
+</div>
 
     <h3 class="sub-heading">Difficulty Breaking Into Data</h3>
     <div class="data-bars">
@@ -582,10 +629,10 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
       <ion-icon name="logo-linkedin"></ion-icon> LinkedIn Profile
     </a>
     <a href="https://www.mygreatlearning.com/certificate/FOCUXPWY?referrer_code=GLAQ7TUQ" target="_blank" class="proj-link">
-      <ion-icon name="ribbon-outline"></ion-icon> Intro to Power BI Cert
+      <ion-icon name="ribbon-outline"></ion-icon> Intro to Power BI Certificate
     </a>
     <a href="https://www.mygreatlearning.com/certificate/INHGXDYP?referrer_code=GLAQ7TUQ" target="_blank" class="proj-link">
-      <ion-icon name="ribbon-outline"></ion-icon> Data Viz Cert
+      <ion-icon name="ribbon-outline"></ion-icon> Data Vizualization Certificate
     </a>
   </div>
 </aside>

@@ -139,7 +139,7 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
 .project-img-wrap:hover img{transform:scale(1.01);}
 .img-caption{background:var(--surface);padding:10px 16px;font-size:1.2rem;color:var(--text-muted);font-family:var(--ff-display);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;}
 .img-sm{max-width:340px;}
-.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-block:18px;}
+.img-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-block:18px;}
 
 /* Issue tag */
 .issue-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-block:20px;}
@@ -345,12 +345,13 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
         <div class="code-header">
           <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
           <span class="code-lang">SQL</span>
-          <button class="copy-btn" onclick="copyCode(this, 'SELECT *,\nROW_NUMBER() OVER(\n  PARTITION BY company, industry, total_laid_off, `date`\n) AS row_num\nFROM layoffs_staging;')"><ion-icon name="copy-outline"></ion-icon> Copy</button>
+          <button class="copy-btn" onclick="copyCode(this, 'SELECT *,\nROW_NUMBER() OVER(\n    PARTITION BY company, location, industry,\n    total_laid_off, percentage_laid_off, `date`,\n    stage, country, funds_raised_millions\n  )"><ion-icon name="copy-outline"></ion-icon> Copy</button>
         </div>
         <div class="code-body"><pre><code><span class="kw">SELECT</span> <span class="op">*</span>,
-  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(
-    <span class="kw">PARTITION BY</span> <span class="tb">company</span>, <span class="tb">industry</span>, <span class="tb">total_laid_off</span>, <span class="bt">`date`</span>
-  ) <span class="kw">AS</span> <span class="tb">row_num</span>
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>
+  (<span class="kw">PARTITION BY</span> <span class="tb">company</span>, <span class="tb">location</span>, <span class="tb">industry</span>,
+          <span class="tb">total_laid_off</span>, <span class="tb">percentage_laid_off</span>, <span class="bt">`date`</span>,
+          <span class="tb">stage</span>, <span class="tb">country</span>, <span class="tb">funds_raised_millions</span>) <span class="kw">AS</span> <span class="tb">row_num</span>
 <span class="kw">FROM</span> <span class="tb">layoffs_staging</span>;</code></pre></div>
       </div>
       <div class="project-img-wrap">
@@ -446,7 +447,7 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
 <span class="kw">FROM</span> <span class="tb">layoffs_staging2</span>
 <span class="kw">WHERE</span> <span class="tb">row_num</span> <span class="op">&gt;</span> <span class="nm">1</span>;</code></pre></div>
       </div>
-      <div class="project-img-wrap img-sm">
+      <div class="project-img-wrap">
         <img src="sql/image3.png" alt="Duplicates Deleted">
         <div class="img-caption">Duplicate Rows Deleted</div>
       </div>
@@ -582,11 +583,7 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
       <div class="img-grid">
         <div class="project-img-wrap" style="margin-block:0;">
           <img src="sql/image12.png" alt="NULL Industry Rows">
-          <div class="img-caption">Rows With NULL Industry</div>
-        </div>
-        <div class="project-img-wrap" style="margin-block:0;">
-          <img src="sql/image11.png" alt="Blank Industry Rows">
-          <div class="img-caption">Rows With Blank Industry</div>
+          <div class="img-caption">Rows With NULL and BLANK Industry</div>
         </div>
       </div>
 
@@ -601,7 +598,7 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
 <span class="kw">SET</span> <span class="tb">industry</span> <span class="op">=</span> <span class="kw">NULL</span>
 <span class="kw">WHERE</span> <span class="tb">industry</span> <span class="op">=</span> <span class="st">''</span>;</code></pre></div>
       </div>
-      <div class="project-img-wrap img-sm">
+      <div class="project-img-wrap ">
         <img src="sql/image13.png" alt="Blanks to NULL">
         <div class="img-caption">Blanks Converted to NULL</div>
       </div>
@@ -627,9 +624,18 @@ p{margin-block-end:16px;} p:last-child{margin-block-end:0;}
 
       <div class="rec-box" style="margin-block-start:20px;">
         <p class="rec-box-label">📝 Note</p>
-        <p style="font-size:1.5rem;color:var(--text-secondary);margin:0;">NULL values in <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">total_laid_off</code>, <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">percentage_laid_off</code>, and <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">funds_raised_millions</code> were intentionally kept — they represent genuinely missing data that may be useful in exploratory analysis.</p>
+        <p style="font-size:1.5rem;color:var(--text-secondary);margin:0;">
+          NULL values in 
+          <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">total_laid_off</code>, 
+          <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">percentage_laid_off</code>, and 
+          <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">funds_raised_millions</code> 
+          were generally preserved, as they represent genuinely missing data useful for exploratory analysis. However, rows where both 
+          <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">total_laid_off</code> 
+          and 
+          <code style="background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-family:var(--ff-code);font-size:1.2rem;">percentage_laid_off</code> 
+          were NULL were removed due to having no analytical value.
+        </p>
       </div>
-    </div>
 
     <!-- Step 7 -->
     <div class="step-block">
